@@ -1,7 +1,6 @@
-# Server Congfiguration
+# Server Configuration
 server:
   port: 8080
-
 
 # Spring Cloud API Gateway Configuration
 spring:
@@ -11,19 +10,59 @@ spring:
   cloud:
     gateway:
       routes:
-      - id: posts-service
-        uri: https://jsonplaceholder.typicode.com
-        predicates:
-          - Path=/posts,/posts/{segement},/posts/{segement}/comments # Allows Only Requests to /posts/**
+        # CREATE: Allow only POST on /posts
+        - id: posts-service-create
+          uri: https://jsonplaceholder.typicode.com
+          predicates:
+            - Path=/posts
+            - Method=POST
 
-      - id: comments-service
-        uri: https://jsonplaceholder.typicode.com
-        predicates:
-          - Path=/comments            # Allows Requests to /comments
-          - Method=GET                # Allows Only GET Requests to /comments/**
-          - Query=postId, [0-9]+      # Ensures postId is a number
+        # READ ALL: Allow only GET on /posts
+        - id: posts-service-list
+          uri: https://jsonplaceholder.typicode.com
+          predicates:
+            - Path=/posts
+            - Method=GET
 
-# Logs Congfiguration
+        # READ ONE: Allow only GET on /posts/{id}
+        - id: posts-service-get-by-id
+          uri: https://jsonplaceholder.typicode.com
+          predicates:
+            - Path=/posts/{segment}
+            - Method=GET
+
+        # Allow GET and PUT on /posts/{id} (get and update)
+        # UPDATE: Allow only PUT on /posts/{id}
+        - id: posts-service-update-by-id
+          uri: https://jsonplaceholder.typicode.com
+          predicates:
+            - Path=/posts/{segment}
+            - Method=PUT
+
+        # DELETE: Allow only DELETE on /posts/{id}
+        - id: posts-service-delete-by-id
+          uri: https://jsonplaceholder.typicode.com
+          predicates:
+            - Path=/posts/{segment}
+            - Method=DELETE
+
+        # Allow only GET on /posts/{id}/comments
+        - id: posts-service-get-comments-by-post
+          uri: https://jsonplaceholder.typicode.com
+          predicates:
+            - Path=/posts/{segment}/comments
+            - Method=GET
+
+
+        # Allow only GET on /comments with postId query param
+        - id: comments-service
+          uri: https://jsonplaceholder.typicode.com
+          predicates:
+            - Path=/comments
+            - Method=GET
+            - Query=postId, [0-9]+
+
+# Logging Configuration
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
