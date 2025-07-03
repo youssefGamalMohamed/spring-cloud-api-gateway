@@ -1,3 +1,28 @@
+# Server Congfiguration
+server:
+  port: 8080
+
+
+# Spring Cloud API Gateway Configuration
 spring:
   application:
     name: spring-cloud-api-gateway
+
+  cloud:
+    gateway:
+      routes:
+      - id: posts-service
+        uri: https://jsonplaceholder.typicode.com
+        predicates:
+          - Path=/posts,/posts/{segement},/posts/{segement}/comments # Allows Only Requests to /posts/**
+
+
+# Logs Congfiguration
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    org.springframework.boot.autoconfigure.web: DEBUG
+    reactor.netty: DEBUG
+    redisratelimiter: DEBUG
