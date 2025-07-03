@@ -16,6 +16,12 @@ spring:
         predicates:
           - Path=/posts,/posts/{segement},/posts/{segement}/comments # Allows Only Requests to /posts/**
 
+      - id: comments-service
+        uri: https://jsonplaceholder.typicode.com
+        predicates:
+          - Path=/comments            # Allows Requests to /comments
+          - Method=GET                # Allows Only GET Requests to /comments/**
+          - Query=postId, [0-9]+      # Ensures postId is a number
 
 # Logs Congfiguration
 logging:
