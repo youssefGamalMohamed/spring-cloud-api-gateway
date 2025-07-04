@@ -30,7 +30,14 @@ spring:
           predicates:
             - Path=/posts/{segment}
             - Method=GET
-
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 2
+                redis-rate-limiter.burstCapacity: 5
+                redis-rate-limiter.requestedTokens: 2
+                
         # Allow GET and PUT on /posts/{id} (get and update)
         # UPDATE: Allow only PUT on /posts/{id}
         - id: posts-service-update-by-id
@@ -61,6 +68,26 @@ spring:
             - Path=/comments
             - Method=GET
             - Query=postId, [0-9]+
+
+  # Redis Rate Limiter Configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+
+# Zipkin Tracing Configuration
+management:
+  tracing:
+    sampling:
+      probability: 1.0 # 100% sampling, adjust as needed
+    enabled: true
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans # Default Zipkin endpoint
+
+
 
 # Logging Configuration
 logging:
