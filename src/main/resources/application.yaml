@@ -9,6 +9,11 @@ spring:
 
   cloud:
     gateway:
+
+      # Global filters
+      default-filters: 
+        - RequestIdFilter # Custom filter to add a unique request ID to each request
+
       routes:
         # CREATE: Allow only POST on /posts
         - id: posts-service-create
