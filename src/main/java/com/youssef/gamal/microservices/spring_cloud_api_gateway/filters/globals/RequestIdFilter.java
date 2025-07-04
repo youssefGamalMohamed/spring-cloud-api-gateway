@@ -68,6 +68,10 @@ public class RequestIdFilter implements GlobalFilter, Ordered {
         System.out.println("Trace ID: " + traceId);
         System.out.println("Span ID: " + spanId);
 
+
+        // Add the trace ID and span ID to the response headers
+        exchange.getResponse().getHeaders().add(REQUEST_ID_HEADER, traceId != null ? traceId : "unknown");
+
         return chain.filter(exchange);
     }
 
