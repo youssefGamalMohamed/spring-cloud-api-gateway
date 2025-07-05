@@ -7,6 +7,12 @@ spring:
   application:
     name: spring-cloud-api-gateway
 
+  docker:
+    compose:
+      enabled: true
+      file: compose.yml
+      
+
   cloud:
     gateway:
 

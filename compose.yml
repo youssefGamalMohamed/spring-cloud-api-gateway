@@ -7,3 +7,18 @@ services:
     image: 'redis/redis-stack:7.2.0-v17'
     ports:
       - '6379:6379'
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.4
+    command: start-dev
+    environment:
+      KC_DB: dev-mem
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8081:8080"
+    networks:
+      - springnet
+
+networks:
+  springnet:
+    driver: bridge
