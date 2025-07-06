@@ -1,17 +1,35 @@
 # Server Configuration
 server:
-  port: 8080
+  port: 9090
 
 # Spring Cloud API Gateway Configuration
 spring:
   application:
     name: spring-cloud-api-gateway
 
+  # Enable Docker Compose support
   docker:
     compose:
       enabled: true
       file: compose.yml
-      
+
+  # OAuth2 Client Configuration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs
+      client: # OAuth2 Client Configuration (when Gateway acts as a Resource Server)
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/master
+        registration: # OAuth2 Client Configuration (when Gateway acts as a Client)
+          web-app-client:
+            provider: keycloak
+            client-id: web-app-client
+            client-secret: j0BDFgqsxpq9OWCOzGehx7sYrqhoBRbb
+            authorization-grant-type: authorization_code
+            scope: openid
 
   cloud:
     gateway:
@@ -42,6 +60,7 @@ spring:
             - Path=/posts/{segment}
             - Method=GET
           filters:
+            - TokenRelay
             - name: RequestRateLimiter
               args:
                 key-resolver: "#{@ipKeyResolver}"
