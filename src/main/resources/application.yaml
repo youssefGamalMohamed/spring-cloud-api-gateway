@@ -38,7 +38,11 @@ spring:
             client-secret: j0BDFgqsxpq9OWCOzGehx7sYrqhoBRbb
             authorization-grant-type: authorization_code
             scope: openid,email,profile
-
+            # here we use the baseUrl to dynamically set the redirect URI
+            # This is useful when running in different environments
+            # it must be same at Keycloak Client Configuration
+            # as an example: http://localhost:9090/login/oauth2/code/web-app-client
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
   
   cloud:
     gateway:
@@ -70,9 +74,12 @@ spring:
             - Method=GET
           filters:
             - TokenRelay=
-            - name: RequestRateLimiter
+            - name: RequestRateLimiter 
               args:
-                key-resolver: "#{@userNameResolver}"
+                # Principal Name Key Resolver is Defulat Implementation provided by Spring Cloud Gateway
+                # It uses the principal name from the JWT token as the key for rate limiting
+                # you can see the implementation for it with class PrincipalNameKeyResolver.class
+                key-resolver: "#{@principalNameKeyResolver}" 
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 2
                 redis-rate-limiter.requestedTokens: 1
