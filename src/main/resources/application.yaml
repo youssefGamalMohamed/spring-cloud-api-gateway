@@ -18,25 +18,34 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs
+          jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs # Keycloak JWK Set URI
+          principal-claim-name: preferred_username # Claim to use as the principal name
+
       client: # OAuth2 Client Configuration (when Gateway acts as a Resource Server)
         provider:
           keycloak:
             issuer-uri: http://localhost:8080/realms/master
+            authorization-uri: http://localhost:8080/realms/master/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/master/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/master/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
+            
         registration: # OAuth2 Client Configuration (when Gateway acts as a Client)
           web-app-client:
             provider: keycloak
             client-id: web-app-client
             client-secret: j0BDFgqsxpq9OWCOzGehx7sYrqhoBRbb
             authorization-grant-type: authorization_code
-            scope: openid
+            scope: openid,email,profile
 
+  
   cloud:
     gateway:
 
       # Global filters
-      default-filters: 
-        - RequestIdFilter # Custom filter to add a unique request ID to each request
+      # default-filters: 
+      #   - RequestIdFilter # Custom filter to add a unique request ID to each request
 
       routes:
         # CREATE: Allow only POST on /posts
@@ -60,13 +69,13 @@ spring:
             - Path=/posts/{segment}
             - Method=GET
           filters:
-            - TokenRelay
+            - TokenRelay=
             - name: RequestRateLimiter
               args:
-                key-resolver: "#{@ipKeyResolver}"
-                redis-rate-limiter.replenishRate: 2
-                redis-rate-limiter.burstCapacity: 5
-                redis-rate-limiter.requestedTokens: 2
+                key-resolver: "#{@userNameResolver}"
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 2
+                redis-rate-limiter.requestedTokens: 1
                 
         # Allow GET and PUT on /posts/{id} (get and update)
         # UPDATE: Allow only PUT on /posts/{id}
@@ -126,5 +135,13 @@ logging:
     org.springframework.http.server.reactive: DEBUG
     org.springframework.web.reactive: DEBUG
     org.springframework.boot.autoconfigure.web: DEBUG
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+    org.springframework.security.oauth2.server.resource: DEBUG
+    org.springframework.security.authentication: DEBUG
+    org.springframework.security.web.server: DEBUG
     reactor.netty: DEBUG
     redisratelimiter: DEBUG
+    org.springframework.cloud.circuitbreaker: DEBUG
+    org.springframework.cloud.circuitbreaker.resilience4j: DEBUG
+    io.github.resilience4j: DEBUG
