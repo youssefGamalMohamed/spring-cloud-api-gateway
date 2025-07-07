@@ -18,24 +18,24 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs # Keycloak JWK Set URI
+          jwk-set-uri: http://localhost:8080/realms/json-placeholder-realm/protocol/openid-connect/certs # Keycloak JWK Set URI
           principal-claim-name: preferred_username # Claim to use as the principal name
 
       client: # OAuth2 Client Configuration (when Gateway acts as a Resource Server)
         provider:
           keycloak:
-            issuer-uri: http://localhost:8080/realms/master
-            authorization-uri: http://localhost:8080/realms/master/protocol/openid-connect/auth
-            token-uri: http://localhost:8080/realms/master/protocol/openid-connect/token
-            user-info-uri: http://localhost:8080/realms/master/protocol/openid-connect/userinfo
-            jwk-set-uri: http://localhost:8080/realms/master/protocol/openid-connect/certs
+            issuer-uri: http://localhost:8080/realms/json-placeholder-realm
+            authorization-uri: http://localhost:8080/realms/json-placeholder-realm/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/json-placeholder-realm/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/json-placeholder-realm/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8080/realms/json-placeholder-realm/protocol/openid-connect/certs
             user-name-attribute: preferred_username
             
         registration: # OAuth2 Client Configuration (when Gateway acts as a Client)
           web-app-client:
             provider: keycloak
             client-id: web-app-client
-            client-secret: j0BDFgqsxpq9OWCOzGehx7sYrqhoBRbb
+            client-secret: kc9pcxUJcVk7hTsY1ciskdH3we9cfXzD
             authorization-grant-type: authorization_code
             scope: openid,email,profile
             # here we use the baseUrl to dynamically set the redirect URI
